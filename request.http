@@ -1,0 +1,55 @@
+### 🔹 Crear un nuevo usuario
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "jose",
+  "password": "123456",
+  "question": "¿Nombre de tu primer mascota?",
+  "answer": "logan"
+}
+
+### 🔹 Obtener todos los usuarios
+GET http://localhost:3000/api/users
+
+### 🔹 Obtener usuario por nombre
+GET http://localhost:3000/api/users/aldair
+
+### 🔹 Login (usuario y contraseña correctos)
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "username": "aldair",
+  "password": "123456"
+}
+
+### 🔹 Obtener pregunta secreta por nombre
+POST http://localhost:3000/api/users/recover/question
+Content-Type: application/json
+
+{
+  "username": "jose"
+}
+
+### 🔹 Verificar respuesta secreta y cambiar contraseña
+POST http://localhost:3000/api/users/recover/answer
+Content-Type: application/json
+
+{
+  "username": "jose",
+  "answer": "pizza",
+  "newPassword": "nueva123"
+}
+
+### 🔹 Actualizar usuario (por ejemplo, cambiar pregunta y respuesta)
+PUT http://localhost:3000/api/users/jose
+Content-Type: application/json
+
+{
+  "question": "¿Tu comida favorita?",
+  "answer": "pizza"
+}
+
+### 🔹 Eliminar usuario
+DELETE http://localhost:3000/api/users/aldair

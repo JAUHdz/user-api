@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "username": "aldair",
-  "password": "123456"
+  "password": "1234"
 }
 
 ### 🔹 Obtener pregunta secreta por nombre
@@ -53,3 +53,7 @@ Content-Type: application/json
 
 ### 🔹 Eliminar usuario
 DELETE http://localhost:3000/api/users/aldair
+
+###
+GET https://libros-0gqz.onrender.com/api/LibroMaterial
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODZmZjFjYjU4MjkwMjA5YjZhODljZDQiLCJuYW1lIjoiYWxkYWlyIiwiaWF0IjoxNzUzMjg1MDM0LCJleHAiOjE3NTMyODUzMzR9.pSnZjqsx8cPJKixckuCY1cn4YBUJW2JSkdnoNGTAGGo

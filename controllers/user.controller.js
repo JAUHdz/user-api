@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Crear usuario
 exports.createUser = async (req, res) => {
@@ -44,7 +45,21 @@ exports.loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-    res.json({ message: 'Login exitoso' });
+    // Crear el token
+    const token = jwt.sign(
+  {
+    sub: user._id,
+    name: user.username
+  },
+  'miclaveultrasecreta1234567890123456',
+  {
+    algorithm: 'HS256',  // 🔥 IMPORTANTE
+    expiresIn: '5m'
+  }
+);
+
+    
+    res.json({ message: 'Login exitoso', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

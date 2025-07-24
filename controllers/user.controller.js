@@ -82,7 +82,7 @@ encrypted += cipher.final('hex');
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // ✅ En local pon esto en false si no usas HTTPS
-      sameSite: 'Lax',
+      sameSite: 'None',
       maxAge: 5 * 60 * 1000 // ⏱️ 5 minutos en milisegundos (para testing)
     });
 

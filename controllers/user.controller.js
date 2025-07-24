@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
 
 // Crear usuario
 exports.createUser = async (req, res) => {
@@ -38,6 +40,8 @@ exports.getUserByUsername = async (req, res) => {
 //login
 exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
+  const secretKey = process.env.CRYPTO_SECRET; // clave para cifrar
+
   try {
     const user = await User.findOne({ username });
     if (!user) return res.status(401).json({ error: 'Usuario no encontrado' });
@@ -45,25 +49,84 @@ exports.loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-    // Crear el token
-    const token = jwt.sign(
-  {
-    sub: user._id,
-    name: user.username
-  },
-  'miclaveultrasecreta1234567890123456',
-  {
-    algorithm: 'HS256',  // 🔥 IMPORTANTE
-    expiresIn: '5m'
-  }
-);
+    const data = JSON.stringify({ name: user.username });
 
-    
+    const iv = crypto.randomBytes(16);
+
+
+    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(secretKey, 'hex'), iv); // iv debe ser fijo o guardado
+let encrypted = cipher.update(data, 'utf8', 'hex');
+encrypted += cipher.final('hex');
+
+    // 🔑 Access Token (1 minuto)
+    const token = jwt.sign(
+      {  data: encrypted },
+      process.env.JWT_SECRET,
+      {
+        algorithm: 'HS256',
+        expiresIn: '1m'  // ⏱️ Cambiado a 1 minuto
+      }
+    );
+
+    // 🔄 Refresh Token (5 minutos)
+    const refreshToken = jwt.sign(
+      { name: user.username },
+      process.env.JWT_SECRET2,
+      {
+        algorithm: 'HS256',
+        expiresIn: '5m'  // ⏱️ Cambiado a 5 minutos
+      }
+    );
+
+    // 🍪 Guardar el refreshToken en una cookie HttpOnly
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true, // ✅ En local pon esto en false si no usas HTTPS
+      sameSite: 'Lax',
+      maxAge: 5 * 60 * 1000 // ⏱️ 5 minutos en milisegundos (para testing)
+    });
+
+    // Enviar el accessToken al frontend
     res.json({ message: 'Login exitoso', token });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
+exports.refreshToken = (req, res) => {
+  const token = req.cookies.refreshToken;
+
+  console.log("Token recibido en la cookie:", token); // ✅ para depurar
+
+  // ✅ Validación básica
+  if (!token) return res.status(401).json({ error: "No hay token de refresco" });
+
+  try {
+    // ✅ Verifica el token con la CLAVE correcta del refresh
+    const decoded = jwt.verify(token, process.env.JWT_SECRET2); // ⛔ antes usabas REFRESH_SECRET, asegúrate de usar la misma que en el login
+
+    // ✅ Generar nuevo accessToken
+    const newAccessToken = jwt.sign(
+      { name: decoded.name },
+      process.env.JWT_SECRET,
+      {
+        algorithm: 'HS256',
+        expiresIn: '1m' // mantenemos igual que el original
+      }
+    );
+
+    // ✅ Devuelve el nuevo token
+    return res.json({ token: newAccessToken });
+
+  } catch (err) {
+    console.error("Refresh token inválido", err);
+    return res.status(403).json({ error: "Token inválido o expirado" });
+  }
+};
+
+
 
 //recuperar/ pregunta
 exports.getQuestionByUsername = async (req, res) => {

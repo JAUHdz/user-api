@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "username": "aldair",
-  "password": "1234"
+  "password": "12345"
 }
 
 ### 🔹 Obtener pregunta secreta por nombre
@@ -57,3 +57,15 @@ DELETE http://localhost:3000/api/users/aldair
 ###
 GET https://libros-0gqz.onrender.com/api/LibroMaterial
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODZmZjFjYjU4MjkwMjA5YjZhODljZDQiLCJuYW1lIjoiYWxkYWlyIiwiaWF0IjoxNzUzMjg1MDM0LCJleHAiOjE3NTMyODUzMzR9.pSnZjqsx8cPJKixckuCY1cn4YBUJW2JSkdnoNGTAGGo
+
+###
+GET https://www.autor3s.somee.com/api/AutorControlador
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODZmZjFjYjU4MjkwMjA5YjZhODljZDQiLCJuYW1lIjoiYWxkYWlyIiwiaWF0IjoxNzUzMjg4NDIwLCJleHAiOjE3NTMyODg3MjB9.gPMJwyhfo7Xh9k4fn1z08pBdQCQZGF-_9sxqx1DkhTQ
+
+###
+POST http://localhost:3000/api/users/refresh
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWxkYWlyIiwiaWF0IjoxNzUzMzM3NDM2LCJleHAiOjE3NTMzMzc3MzZ9.mOiqQXPdrjfT-SjBx_yXpWPYyJ_DkoTrkURqv6sez5A"
+}

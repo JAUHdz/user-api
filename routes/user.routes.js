@@ -11,6 +11,7 @@ router.delete('/:username', userCtrl.deleteUser);
 
 // Auth
 router.post('/login', userCtrl.loginUser);
+router.post("/refresh", userCtrl.refreshToken);
 
 // Recuperación
 router.post('/recover/question', userCtrl.getQuestionByUsername);
